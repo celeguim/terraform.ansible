@@ -15,6 +15,8 @@ My own private key (id_rsa.pub) will be added into the instances and my private 
 
 #### Initialize
 
+This will install the required providers defined in version.tf
+
 ```sh
 cd terraform
 terraform init
@@ -34,21 +36,11 @@ terraform destroy
 
 ## Ansible
 
-#### Create Virtual Environment
-
-```sh
-# Create the environment.
-python -m venv .venv
-# Activate the virtual environment.
-source .venv/bin/activate
-pip install ansible
-```
-
 #### Install Requirements
 
 ```sh
 cd ansible
-ansible-galaxy install -r requirements.yml
+ansible-galaxy install -r requirements.yaml
 ```
 
 Installed collections will be stored in an `ansible_collections` directory, by default ~/.ansible/collections
@@ -62,7 +54,6 @@ This file uses the [Terraform provider plugin](https://github.com/ansible-collec
 ```yml
 plugin: cloud.terraform.terraform_provider
 project_path: ../terraform
-# Binary name or full path to the binary.
 binary_path: terraform
 ```
 
@@ -76,41 +67,31 @@ List Terraform inventory with all the variables:
 ansible-inventory --graph --vars
 @all:
   |--@ungrouped:
-  |--@web:
-  |  |--@aws:
-  |  |  |--web1
-  |  |  |  |--{ansible_host = 1.2.3.4}
-  |  |  |  |--{ansible_ssh_private_key_file = ../.ssh/demo_key}
-  |  |  |  |--{ansible_user = admin}
-  |  |  |  |--{fqdn = web1.example.com}
-  |  |  |  |--{hostname = web1}
-  |  |  |  |--{list_var = ["one","two","three"]}
-  |  |  |  |--{map_var = {"country":"US","region":"us-east-1"}}
-  |  |--@hetzner:
-  |  |  |--web2
-  |  |  |  |--{ansible_host = 5.6.7.8}
-  |  |  |  |--{ansible_ssh_private_key_file = ../.ssh/demo_key}
-  |  |  |  |--{ansible_user = root}
-  |  |  |  |--{fqdn = web2.example.com}
-  |  |  |  |--{hostname = web2}
-  |  |--{ansible_ssh_private_key_file = ../.ssh/demo_key}
+  |--@aws_web:
+  |  |--web1
+  |  |  |--{ansible_host = 44.222.228.94}
+  |  |  |--{ansible_user = ubuntu}
+  |  |  |--{fqdn = web1.example.com}
+  |  |  |--{hostname = web1}
+  |  |  |--{list_var = ["one","two","three"]}
+  |  |  |--{map_var = {"country":"US","region":"us-east-1"}}
+  |  |--web2
+  |  |  |--{ansible_host = 44.222.209.137}
+  |  |  |--{ansible_user = ec2-user}
+  |  |  |--{fqdn = web2.example.com}
+  |  |  |--{hostname = web2}
+  |  |  |--{list_var = ["one","two","three"]}
+  |  |  |--{map_var = {"country":"US","region":"us-east-1"}}
 ```
 
-Run a raw command on the hosts created by Terraform:
+To check Ansible, run a shell module on the hosts created by Terraform:
 
 ```sh
-ansible all -m raw -a uptime
-```
+ansible all -m ansible.builtin.shell -a 'echo Hostname: $(hostname)'
 
-Output:
-
-```sh
-$ ansible all -m raw -a uptime
 web2 | CHANGED | rc=0 >>
- 17:25:14 up 15 min,  1 user,  load average: 0.00, 0.00, 0.00
-Shared connection to 5.6.7.8 closed.
+Hostname: ip-172-31-30-203.ec2.internal
 
 web1 | CHANGED | rc=0 >>
- 17:25:14 up 15 min,  1 user,  load average: 0.00, 0.00, 0.00
-Shared connection to 1.2.3.4 closed.
+Hostname: ip-172-31-24-22
 ```
