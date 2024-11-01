@@ -24,7 +24,7 @@ resource "aws_key_pair" "default" {
 }
 
 resource "aws_instance" "web1" {
-  # Ubuntu
+  # Ubuntu 22.04
   ami                    = "ami-0866a3c8686eaeeba"
   instance_type          = "t2.micro"
   key_name               = aws_key_pair.default.key_name

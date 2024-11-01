@@ -1,12 +1,12 @@
 # Terraform & Ansible Provider Example
 
-Terraform and Ansible configuration using a dynamic Terraform inventory
+An example of Terraform and Ansible configuration using a dynamic Terraform inventory.
 
 ## Terraform
 
-For simplicity, Terraform will creates 2 EC2 instances on **AWS**.
+For simplicity, Terraform will creates 2 EC2 instances on **AWS/us-east-1**.
 
-My own key id_rsa.pub will be added into the instances and my private key will be used for SSH authentication.
+My own private key (id_rsa.pub) will be added into the instances and my private key (id_rsa) will be used for SSH authentication.
 
 #### Requirements
 
@@ -37,14 +37,6 @@ terraform destroy
 #### Create Virtual Environment
 
 ```sh
-# Create a virtual environment at ./venv in the current directory.
-make venv
-source .venv/bin/activate
-```
-
-Or:
-
-```sh
 # Create the environment.
 python -m venv .venv
 # Activate the virtual environment.
@@ -59,11 +51,11 @@ cd ansible
 ansible-galaxy install -r requirements.yml
 ```
 
-Installed collections will be stored in an `ansible_collections` directory in the current directory (See: `ansible.cfg`).
+Installed collections will be stored in an `ansible_collections` directory, by default ~/.ansible/collections
 
 #### Inventory
 
-The inventory file is `terraform.yml` (Can be any name).
+The inventory file is `terraform.yaml`
 
 This file uses the [Terraform provider plugin](https://github.com/ansible-collections/cloud.terraform/blob/main/docs/cloud.terraform.terraform_provider_inventory.rst), defines the Terraform project path and the `terraform` binary path:
 
@@ -74,19 +66,11 @@ project_path: ../terraform
 binary_path: terraform
 ```
 
-The inventory file is set in the `ansible.cfg` file, it can also be passed when running Ansible using the `-i` flag.
+The inventory file is set in the `ansible.cfg` file.
 
 #### Usage
 
-List the Terraform inventory with all the variables:
-
-```sh
-make inventory
-# Or
-ansible-inventory --graph -vars
-```
-
-Output:
+List Terraform inventory with all the variables:
 
 ```sh
 ansible-inventory --graph --vars
@@ -115,8 +99,6 @@ ansible-inventory --graph --vars
 Run a raw command on the hosts created by Terraform:
 
 ```sh
-make uptime
-# Or
 ansible all -m raw -a uptime
 ```
 
