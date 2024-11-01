@@ -61,11 +61,11 @@ resource "ansible_host" "web1" {
     fqdn     = "web1.example.com"
 
     # To define lists or maps use jsonencode().
-    list_var = jsonencode(["one", "two", "three"])
+    packages = jsonencode(["openjdk-11-jre", "tomcat10", "tomcat10-admin"])
 
     map_var = jsonencode({
-      country = "US"
-      region  = "us-east-1"
+      provider = "AWS"
+      region   = "us-east-1"
     })
   }
 }
@@ -84,11 +84,11 @@ resource "ansible_host" "web2" {
     fqdn     = "web2.example.com"
 
     # To define lists or maps use jsonencode().
-    list_var = jsonencode(["one", "two", "three"])
+    packages = jsonencode(["nginx", "nginx-plus-module-njs"])
 
     map_var = jsonencode({
-      country = "US"
-      region  = "us-east-1"
+      provider = "AWS"
+      region   = "us-east-1"
     })
   }
 }

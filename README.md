@@ -65,6 +65,7 @@ List Terraform inventory with all the variables:
 
 ```sh
 ansible-inventory --graph --vars
+
 @all:
   |--@ungrouped:
   |--@aws_web:
@@ -73,15 +74,16 @@ ansible-inventory --graph --vars
   |  |  |--{ansible_user = ubuntu}
   |  |  |--{fqdn = web1.example.com}
   |  |  |--{hostname = web1}
-  |  |  |--{list_var = ["one","two","three"]}
-  |  |  |--{map_var = {"country":"US","region":"us-east-1"}}
+  |  |  |--{map_var = {"provider":"AWS","region":"us-east-1"}}
+  |  |  |--{packages = ["openjdk-11-jre","tomcat10","tomcat10-admin"]}
   |  |--web2
   |  |  |--{ansible_host = 44.222.209.137}
   |  |  |--{ansible_user = ec2-user}
   |  |  |--{fqdn = web2.example.com}
   |  |  |--{hostname = web2}
-  |  |  |--{list_var = ["one","two","three"]}
-  |  |  |--{map_var = {"country":"US","region":"us-east-1"}}
+  |  |  |--{map_var = {"provider":"AWS","region":"us-east-1"}}
+  |  |  |--{packages = ["nginx","nginx-plus-module-njs"]}
+
 ```
 
 To check Ansible, run a shell module on the hosts created by Terraform:
