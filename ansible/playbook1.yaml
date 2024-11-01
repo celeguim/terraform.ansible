@@ -1,0 +1,19 @@
+---
+- hosts: [ web1, web2 ]
+  become: yes
+  gather_facts: yes
+
+  tasks:
+  - name: Install Packages on Ubuntu
+    ansible.builtin.apt:
+      pkg: "{{ packages }}"
+      state: present
+    when:
+      inventory_hostname == 'web1'
+
+  - name: Install Packages on Amazon Linux
+    ansible.builtin.yum:
+      pkg: "{{ packages }}"
+      state: present
+    when:
+      inventory_hostname == 'web2'

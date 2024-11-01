@@ -84,7 +84,7 @@ resource "ansible_host" "web2" {
     fqdn     = "web2.example.com"
 
     # To define lists or maps use jsonencode().
-    packages = jsonencode(["nginx", "nginx-plus-module-njs"])
+    packages = jsonencode(["nginx", "nginx-mod-devel"])
 
     map_var = jsonencode({
       provider = "AWS"

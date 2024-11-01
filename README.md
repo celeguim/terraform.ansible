@@ -83,7 +83,6 @@ ansible-inventory --graph --vars
   |  |  |--{hostname = web2}
   |  |  |--{map_var = {"provider":"AWS","region":"us-east-1"}}
   |  |  |--{packages = ["nginx","nginx-plus-module-njs"]}
-
 ```
 
 To check Ansible, run a shell module on the hosts created by Terraform:
@@ -96,4 +95,16 @@ Hostname: ip-172-31-30-203.ec2.internal
 
 web1 | CHANGED | rc=0 >>
 Hostname: ip-172-31-24-22
+```
+
+### Install Playbook
+
+Install the packages defined in the packages variable (aws.tf)
+
+```sh
+ansible-playbook playbook1.yaml -vvv
+
+PLAY RECAP **************************************************************************************************************************
+web1                       : ok=2    changed=0    unreachable=0    failed=0    skipped=1    rescued=0    ignored=0   
+web2                       : ok=2    changed=1    unreachable=0    failed=0    skipped=1    rescued=0    ignored=0   
 ```
