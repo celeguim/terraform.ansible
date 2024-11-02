@@ -24,28 +24,28 @@ resource "aws_key_pair" "default" {
 }
 
 resource "aws_instance" "nginx" {
-  # Ubuntu 22.04 on Public Subnet
-  ami                    = var.ami_id_ubuntu
+  # Amazon Linux on Public Subnet
+  ami                    = var.ami_id_aws
   instance_type          = var.instance_type
   key_name               = aws_key_pair.default.key_name
   vpc_security_group_ids = [aws_security_group.allow_ssh.id]
   subnet_id              = aws_subnet.useast1_public[0].id
 
   tags = {
-    Name = "public-server"
+    Name = "nginx-server"
   }
 }
 
 resource "aws_instance" "tomcat" {
-  # Amazon Linux on Private Subnet
-  ami                    = var.ami_id_aws
+  # Ubuntu 22.04 on Private Subnet
+  ami                    = var.ami_id_ubuntu
   instance_type          = var.instance_type
   key_name               = aws_key_pair.default.key_name
   vpc_security_group_ids = [aws_security_group.allow_ssh.id]
   subnet_id              = aws_subnet.useast1_private[0].id
 
   tags = {
-    Name = "private-server"
+    Name = "tomcat-server"
   }
 }
 
@@ -55,7 +55,11 @@ resource "ansible_host" "nginx" {
 
   variables = {
     # Connection vars.
-    ansible_user = "ubuntu" # Depends on the OS (admin for Debian).
+    # Depends on the OS 
+    # admin for Debian
+    # ubuntu for Ubuntu
+    # ec2-user for Amazon Linux
+    ansible_user = "ec2-user"
     ansible_host = aws_instance.nginx.public_ip
 
     # Custom vars.
@@ -79,7 +83,12 @@ resource "ansible_host" "tomcat" {
 
   variables = {
     # Connection vars.
-    ansible_user            = "ec2-user" # Depends on the OS (admin for Debian).
+    # Connection vars.
+    # Depends on the OS 
+    # admin for Debian
+    # ubuntu for Ubuntu
+    # ec2-user for Amazon Linux
+    ansible_user            = "ubuntu"
     ansible_host            = aws_instance.tomcat.private_ip
     ansible_ssh_common_args = "-o ProxyCommand='ssh -p 22 -W %h:%p -i ~/.ssh/id_rsa ubuntu@${aws_instance.nginx.public_ip}'"
 
