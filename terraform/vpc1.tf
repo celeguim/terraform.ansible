@@ -13,7 +13,7 @@ resource "aws_subnet" "useast1_public" {
   cidr_block              = element(var.public_subnet_cidrs["useast1"], count.index)
   map_public_ip_on_launch = true
   tags = {
-    Name = "useast1_public"
+    Name = "vpc1-public-${count.index}"
   }
 }
 
@@ -24,7 +24,7 @@ resource "aws_subnet" "useast1_private" {
   cidr_block              = element(var.private_subnet_cidrs["useast1"], count.index)
   map_public_ip_on_launch = false
   tags = {
-    Name = "useast1_private"
+    Name = "vpc1-private-${count.index}"
   }
 }
 
@@ -38,16 +38,37 @@ resource "aws_internet_gateway" "gw1" {
 }
 
 # route table for gw1
-resource "aws_route_table" "vpc1_route_table" {
+resource "aws_route_table" "gw1_route_table" {
   vpc_id = aws_vpc.useast1.id
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.gw1.id
   }
+  tags = {
+    Name = "gw1_route_table"
+  }
 }
 
-# Associate Route Table to Public Subnet
-resource "aws_route_table_association" "public_association" {
+# route table for nat1
+resource "aws_route_table" "nat1_route_table" {
+  vpc_id = aws_vpc.useast1.id
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.nat1.id
+  }
+  tags = {
+    Name = "nat1_route_table"
+  }
+}
+
+# Associate GW1 Route Table to Public Subnet
+resource "aws_route_table_association" "gw1_rt_association" {
   subnet_id      = aws_subnet.useast1_public[0].id
-  route_table_id = aws_route_table.vpc1_route_table.id
+  route_table_id = aws_route_table.gw1_route_table.id
+}
+
+# Associate NAT1 Route Table to Public Subnet
+resource "aws_route_table_association" "nat1_rt_association" {
+  subnet_id      = aws_subnet.useast1_private[0].id
+  route_table_id = aws_route_table.nat1_route_table.id
 }

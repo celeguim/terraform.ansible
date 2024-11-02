@@ -63,7 +63,7 @@ resource "ansible_host" "nginx" {
     fqdn     = "nginx.example.com"
 
     # To define lists or maps use jsonencode().
-    packages = jsonencode(["nginx", "nginx-mod-devel"])
+    packages = jsonencode(["nginx", ])
 
     map_var = jsonencode({
       provider    = "AWS",
@@ -79,11 +79,9 @@ resource "ansible_host" "tomcat" {
 
   variables = {
     # Connection vars.
-    ansible_user = "ec2-user" # Depends on the OS (admin for Debian).
-    ansible_host = aws_instance.tomcat.private_ip
-
-    # Configura um túnel SSH passando pelo Bastion Host
-    ssh_extra_args = "-o ProxyCommand='ssh -W %h:%p -i ~/.ssh/id_rsa.pub ec2-user@${aws_instance.nginx.public_ip}'"
+    ansible_user            = "ec2-user" # Depends on the OS (admin for Debian).
+    ansible_host            = aws_instance.tomcat.private_ip
+    ansible_ssh_common_args = "-o ProxyCommand='ssh -p 22 -W %h:%p -i ~/.ssh/id_rsa ubuntu@${aws_instance.nginx.public_ip}'"
 
     # Custom vars.
     hostname = "tomcat"

@@ -1,5 +1,5 @@
 ---
-- hosts: [ web1, web2 ]
+- hosts: [ nginx, tomcat ]
   become: yes
   gather_facts: yes
 
@@ -9,11 +9,11 @@
       pkg: "{{ packages }}"
       state: present
     when:
-      inventory_hostname == 'web1'
+      inventory_hostname == 'nginx'
 
   - name: Install Packages on Amazon Linux
     ansible.builtin.yum:
       pkg: "{{ packages }}"
       state: present
     when:
-      inventory_hostname == 'web2'
+      inventory_hostname == 'tomcat'
