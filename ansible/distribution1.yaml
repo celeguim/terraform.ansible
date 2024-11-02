@@ -1,0 +1,7 @@
+---
+- hosts: all
+  gather_facts: yes
+  become: false
+  tasks:
+  - name: Linux Distribution
+    debug: msg="{{ ansible_distribution }}"

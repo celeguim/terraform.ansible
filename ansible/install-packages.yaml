@@ -6,14 +6,16 @@
   tasks:
   - name: Install Packages on Ubuntu
     ansible.builtin.apt:
+      update_cache: yes
       pkg: "{{ packages }}"
       state: present
     when:
-      inventory_hostname == 'nginx'
+      ansible_distribution == 'Ubuntu'
 
   - name: Install Packages on Amazon Linux
     ansible.builtin.yum:
+      update_cache: yes
       pkg: "{{ packages }}"
       state: present
     when:
-      inventory_hostname == 'tomcat'
+      ansible_distribution == 'Amazon'
