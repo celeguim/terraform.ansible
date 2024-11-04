@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: [ jenkins-server ]
   gather_facts: yes
   become: false
   tasks:

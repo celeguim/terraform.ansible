@@ -2,4 +2,3 @@
 collections:
   - name: cloud.terraform
     version: 3.0.0
-
