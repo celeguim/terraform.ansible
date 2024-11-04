@@ -1,0 +1,38 @@
+---
+- hosts: jenkins-server
+  become: true 
+
+  tasks: 
+  - name: add jenkins weekly key 
+    ansible.builtin.apt_key:
+      url:  https://pkg.jenkins.io/debian/jenkins.io-2023.key
+      state: present 
+
+  - name: add jenkins repo 
+    ansible.builtin.apt_repository:
+      repo: 'deb https://pkg.jenkins.io/debian binary/'
+      state: present 
+
+  - name: install java
+    ansible.builtin.apt: 
+      update_cache: yes
+      name: openjdk-11-jre
+      state: present
+
+  - name: install packages
+    ansible.builtin.apt: 
+      name: 
+        - jenkins
+        - git
+        - maven3
+      state: present 
+
+  - name: start jenkins service 
+    service: 
+      name: jenkins 
+      state: started 
+
+  - name: enable jenkins to start at boot time 
+    service: 
+      name: jenkins 
+      enabled: yes 

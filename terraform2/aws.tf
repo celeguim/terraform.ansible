@@ -31,7 +31,7 @@ resource "aws_key_pair" "default" {
 }
 
 resource "aws_instance" "jenkins-server" {
-  ami                    = var.ami_id_ubuntu
+  ami                    = var.ami_id_ubuntu_22
   instance_type          = var.instance_type
   key_name               = aws_key_pair.default.key_name
   vpc_security_group_ids = [aws_security_group.sg1.id]
