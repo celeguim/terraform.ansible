@@ -1,0 +1,36 @@
+---
+- hosts: jenkins-server
+  become: true 
+
+  tasks: 
+  - name: add jenkins key 
+    ansible.builtin.rpm_key:
+      key:  https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+      state: present 
+
+  - name: add jenkins repo 
+    ansible.builtin.yum_repository:
+      name: jenkins
+      baseurl: https://pkg.jenkins.io/redhat-stable/jenkins.repo
+      state: present 
+
+  - name: install java
+    ansible.builtin.yum: 
+      update_cache: yes
+      name: java-17-amazon-corretto
+      state: present
+
+  - name: install jenkins
+    ansible.builtin.yum: 
+      name: jenkins 
+      state: present 
+
+  - name: start jenkins service 
+    ansible.builtin.service: 
+      name: jenkins 
+      state: started 
+
+  - name: enable jenkins to start at boot time 
+    ansible.builtin.service: 
+      name: jenkins 
+      enabled: yes 

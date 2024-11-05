@@ -31,7 +31,7 @@ resource "aws_key_pair" "default" {
 }
 
 resource "aws_instance" "jenkins-server" {
-  ami                    = var.ami_id_ubuntu_22
+  ami                    = var.ami_id_aws
   instance_type          = var.instance_type
   key_name               = aws_key_pair.default.key_name
   vpc_security_group_ids = [aws_security_group.sg1.id]
@@ -46,7 +46,7 @@ resource "ansible_host" "jenkins-server" {
   groups = ["devops_tools"]
 
   variables = {
-    ansible_user = "ubuntu"
+    ansible_user = "ec2-user"
     ansible_host = aws_instance.jenkins-server.public_ip
   }
 }
