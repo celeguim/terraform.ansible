@@ -11,7 +11,8 @@
   - name: add jenkins repo 
     ansible.builtin.yum_repository:
       name: jenkins
-      baseurl: https://pkg.jenkins.io/redhat-stable/jenkins.repo
+      description: Jenkins Repository
+      baseurl: https://pkg.jenkins.io/redhat-stable/
       state: present 
 
   - name: install java
@@ -22,6 +23,7 @@
 
   - name: install jenkins
     ansible.builtin.yum: 
+      update_cache: yes
       name: jenkins 
       state: present 
 
