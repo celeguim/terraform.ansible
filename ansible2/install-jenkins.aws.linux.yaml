@@ -18,7 +18,11 @@
   - name: install java
     ansible.builtin.yum: 
       update_cache: yes
-      name: java-17-amazon-corretto
+      name: 
+        - java-17-amazon-corretto
+        - jenkins
+        - git
+        - maven
       state: present
 
   - name: install jenkins
@@ -36,3 +40,11 @@
     ansible.builtin.service: 
       name: jenkins 
       enabled: yes 
+
+  - name: set hostname
+    ansible.builtin.hostname:
+      name: jenkins-server
+
+  # jenkins requires at least 1G
+  - name: resize tmpfs
+    ansible.builtin.shell: mount -o remount,size=2g /tmp/
