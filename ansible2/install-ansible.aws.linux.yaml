@@ -1,0 +1,25 @@
+---
+- hosts: ansible-server
+  become: true 
+
+  tasks: 
+  # - name: add ansible key 
+  #   ansible.builtin.rpm_key:
+  #     key:  https://pkg.ansible.io/redhat-stable/ansible.io-2023.key
+  #     state: present 
+
+  # - name: add ansible repo 
+  #   ansible.builtin.yum_repository:
+  #     name: ansible
+  #     description: ansible Repository
+  #     baseurl: https://pkg.ansible.io/redhat-stable/
+  #     state: present 
+
+  - name: install java
+    ansible.builtin.yum: 
+      update_cache: yes
+      name: 
+      - java-17-amazon-corretto
+      - ansible
+      - docker
+      state: present
