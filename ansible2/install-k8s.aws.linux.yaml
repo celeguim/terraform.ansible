@@ -3,17 +3,13 @@
   become: true 
 
   tasks: 
-  - name: Update the package manager
-    yum:
-      name: '*'
-      state: latest
-
   - name: install docker
     ansible.builtin.yum: 
       update_cache: yes
       name: 
       - docker
       - unzip
+      - conntrack-tools
       state: present
 
   - name: set hostname
@@ -49,7 +45,13 @@
   - name: Install Minikube
     ansible.builtin.shell: rpm -Uvh minikube-latest.x86_64.rpm
 
+  - name: Start Minikube
+    ansible.builtin.shell: minikube start --vm-driver=none
+
 #   curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
 #   curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-latest.x86_64.rpm
 # curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-latest.x86_64.rpm
 # sudo rpm -Uvh minikube-latest.x86_64.rpm
+# minikube start --vm-driver=none
+# apt install conntrack
+# minikube start --vm-driver=none
