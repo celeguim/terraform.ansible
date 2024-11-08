@@ -30,27 +30,27 @@ resource "aws_key_pair" "default" {
   public_key = file("/Users/luiz_celeghin/.ssh/id_rsa.pub")
 }
 
-resource "aws_instance" "jenkins-server" {
-  ami                    = var.ami_id_aws
-  instance_type          = var.instance_type
-  key_name               = aws_key_pair.default.key_name
-  vpc_security_group_ids = [aws_security_group.sg1.id]
+# resource "aws_instance" "jenkins-server" {
+#   ami                    = var.ami_id_aws
+#   instance_type          = var.instance_type
+#   key_name               = aws_key_pair.default.key_name
+#   vpc_security_group_ids = [aws_security_group.sg1.id]
 
-  tags = {
-    Name   = "jenkins-server",
-    Author = "Luiz Celeghin"
-  }
-}
+#   tags = {
+#     Name   = "jenkins-server",
+#     Author = "Luiz Celeghin"
+#   }
+# }
 
-resource "ansible_host" "jenkins-server" {
-  name   = "jenkins-server"
-  groups = ["devops_tools"]
+# resource "ansible_host" "jenkins-server" {
+#   name   = "jenkins-server"
+#   groups = ["devops_tools"]
 
-  variables = {
-    ansible_user = "ec2-user"
-    ansible_host = aws_instance.jenkins-server.public_ip
-  }
-}
+#   variables = {
+#     ansible_user = "ec2-user"
+#     ansible_host = aws_instance.jenkins-server.public_ip
+#   }
+# }
 
 # resource "aws_instance" "ansible-server" {
 #   ami                    = var.ami_id_aws
@@ -73,3 +73,23 @@ resource "ansible_host" "jenkins-server" {
 #   }
 # }
 
+resource "aws_instance" "k8s-server" {
+  ami                    = var.ami_id_aws
+  instance_type          = var.instance_type
+  key_name               = aws_key_pair.default.key_name
+  vpc_security_group_ids = [aws_security_group.sg1.id]
+
+  tags = {
+    Name = "k8s-server"
+  }
+}
+
+resource "ansible_host" "k8s-server" {
+  name   = "k8s-server"
+  groups = ["devops_tools"]
+
+  variables = {
+    ansible_user = "ec2-user"
+    ansible_host = aws_instance.k8s-server.public_ip
+  }
+}
