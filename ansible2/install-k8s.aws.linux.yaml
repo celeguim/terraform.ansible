@@ -39,14 +39,22 @@
   - ansible.builtin.debug:
       var: kubectl_version.stdout
 
+  - name: download crictl
+    ansible.builtin.shell: wget https://github.com/kubernetes-sigs/cri-tools/releases/download/v1.31.1/crictl-v1.31.1-linux-amd64.tar.gz
+
+  - name: extract crictl
+    ansible.builtin.shell: tar -C /usr/local/bin -xzvf crictl-v1.31.1-linux-amd64.tar.gz
+
   - name: Download Minikube
     ansible.builtin.shell: curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-latest.x86_64.rpm
 
   - name: Install Minikube
     ansible.builtin.shell: rpm -Uvh minikube-latest.x86_64.rpm
+    ignore_errors: true
 
   - name: Start Minikube
     ansible.builtin.shell: minikube start --vm-driver=none
+
 
 #   curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
 #   curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-latest.x86_64.rpm
@@ -55,3 +63,6 @@
 # minikube start --vm-driver=none
 # apt install conntrack
 # minikube start --vm-driver=none
+# VERSION="vv1.31.1"
+# curl -LO https://github.com/kubernetes-sigs/cri-tools/releases/download/$VERSION/crictl-$VERSION-linux-amd64.tar.gz
+# sudo tar -C /usr/local/bin -xzvf crictl-$VERSION-linux-amd64.tar.gz
