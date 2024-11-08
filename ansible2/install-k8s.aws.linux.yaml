@@ -1,35 +1,55 @@
 ---
-- hosts: ansible-server
+- hosts: k8s-server
   become: true 
 
   tasks: 
-  # - name: add ansible key 
-  #   ansible.builtin.rpm_key:
-  #     key:  https://pkg.ansible.io/redhat-stable/ansible.io-2023.key
-  #     state: present 
+  - name: Update the package manager
+    yum:
+      name: '*'
+      state: latest
 
-  # - name: add ansible repo 
-  #   ansible.builtin.yum_repository:
-  #     name: ansible
-  #     description: ansible Repository
-  #     baseurl: https://pkg.ansible.io/redhat-stable/
-  #     state: present 
-
-  - name: install java
+  - name: install docker
     ansible.builtin.yum: 
       update_cache: yes
       name: 
-      - java-17-amazon-corretto
-      - ansible
       - docker
+      - unzip
       state: present
 
   - name: set hostname
     ansible.builtin.hostname:
-      name: ansible-server
+      name: k8s-server
 
   - name: docker service 
     ansible.builtin.service: 
       name: docker
       enabled: yes 
       state: started 
+
+  - name: Get latest kubectl version
+    ansible.builtin.shell: curl -L -s https://dl.k8s.io/release/stable.txt
+    register: kubectl_version
+
+  - name: Download kubectl
+    ansible.builtin.get_url:
+      url: "https://dl.k8s.io/release/{{ kubectl_version.stdout }}/bin/linux/amd64/kubectl"
+      dest: /usr/local/bin/kubectl
+      mode: '0755'
+      
+  - name: Verify kubectl installation
+    ansible.builtin.shell: kubectl version --client
+    register: kubectl_version
+
+  - ansible.builtin.debug:
+      var: kubectl_version.stdout
+
+  - name: Download Minikube
+    ansible.builtin.shell: curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-latest.x86_64.rpm
+
+  - name: Install Minikube
+    ansible.builtin.shell: rpm -Uvh minikube-latest.x86_64.rpm
+
+#   curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+#   curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-latest.x86_64.rpm
+# curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-latest.x86_64.rpm
+# sudo rpm -Uvh minikube-latest.x86_64.rpm
